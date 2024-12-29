@@ -29,7 +29,8 @@ public class Program
         //PendingMigrates();
         //ExecutePendindMigrationsOnExecutionTime();
         //GetAllMigrates();
-        GetAppliedMigrates();
+        //GetAppliedMigrates();
+        GeneralDatabaseScritp();
     }
 
     static ApplicationDbContext GetContext() => new();
@@ -148,5 +149,12 @@ public class Program
         using var db = GetContext();
         var migrates = db.Database.GetAppliedMigrations();
         Console.WriteLine($"Migrates:\n{string.Join("\n", migrates)}, Total Migrates: {migrates.Count()}");
+    }
+
+    static void GeneralDatabaseScritp()
+    {
+        using var db = GetContext();
+        var script = db.Database.GenerateCreateScript();
+        Console.WriteLine(script);
     }
 }
