@@ -28,7 +28,8 @@ public class Program
         //SqlInjection();
         //PendingMigrates();
         //ExecutePendindMigrationsOnExecutionTime();
-        GetAllMigrates();
+        //GetAllMigrates();
+        GetAppliedMigrates();
     }
 
     static ApplicationDbContext GetContext() => new();
@@ -139,6 +140,13 @@ public class Program
     {
         using var db = GetContext();
         var migrates = db.Database.GetMigrations();
+        Console.WriteLine($"Migrates:\n{string.Join("\n", migrates)}, Total Migrates: {migrates.Count()}");
+    }
+
+    static void GetAppliedMigrates()
+    {
+        using var db = GetContext();
+        var migrates = db.Database.GetAppliedMigrations();
         Console.WriteLine($"Migrates:\n{string.Join("\n", migrates)}, Total Migrates: {migrates.Count()}");
     }
 }
