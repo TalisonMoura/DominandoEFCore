@@ -9,7 +9,7 @@ namespace DominandoEFCore;
 
 public class Program
 {
-    public static int Count { get; set; }
+    private static int Count { get; set; }
 
     private static void Main(string[] args)
     {
@@ -19,14 +19,15 @@ public class Program
 
         //warmup
         //GetContext().Departments.AsNoTracking().Any();
-        Count = 0;
+        //Count = 0;
         //HandleConnectionState(false);
-        Count = 0;
+        //Count = 0;
         //HandleConnectionState(true);
 
         //ExecuteSQL();
         //SqlInjection();
-        PendingMigrates();
+        //PendingMigrates();
+        ExecutePendindMigrationsOnExecutionTime();
     }
 
     static ApplicationDbContext GetContext() => new();
@@ -125,5 +126,11 @@ public class Program
         using var db = GetContext();
         var migratesPending = db.Database.GetPendingMigrations();
         Console.WriteLine($"Migrates pending: {string.Join("\n ", migratesPending)}, Total Migrates: {migratesPending.Count()}");
+    }
+
+    static void ExecutePendindMigrationsOnExecutionTime()
+    {
+        using var db = GetContext();
+        db.Database.Migrate();
     }
 }
