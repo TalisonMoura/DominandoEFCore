@@ -8,8 +8,9 @@ public class Program
 {
     private static void Main(string[] args)
     {
+        HealthCheckOnDataBse();
+        //GanEnsureCreated();
         //EnsureCreatedAndDeleted();
-        GanEnsureCreated();
     }
 
     static void EnsureCreatedAndDeleted()
@@ -29,5 +30,16 @@ public class Program
 
         var databaseCreator = dbCity.GetService<IRelationalDatabaseCreator>();
         databaseCreator.CreateTables();
+    }
+
+    static void HealthCheckOnDataBse()
+    {
+        using var db = new ApplicationDbContext();
+        var canConnect = db.Database.CanConnect();
+
+        if (canConnect ) 
+            Console.WriteLine("I'm able to connect");
+        else
+            Console.WriteLine("I'm not able to connect");
     }
 }
