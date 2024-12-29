@@ -27,7 +27,8 @@ public class Program
         //ExecuteSQL();
         //SqlInjection();
         //PendingMigrates();
-        ExecutePendindMigrationsOnExecutionTime();
+        //ExecutePendindMigrationsOnExecutionTime();
+        GetAllMigrates();
     }
 
     static ApplicationDbContext GetContext() => new();
@@ -125,12 +126,19 @@ public class Program
     {
         using var db = GetContext();
         var migratesPending = db.Database.GetPendingMigrations();
-        Console.WriteLine($"Migrates pending: {string.Join("\n ", migratesPending)}, Total Migrates: {migratesPending.Count()}");
+        Console.WriteLine($"Migrates pending:\n{string.Join("\n", migratesPending)}, Total Migrates: {migratesPending.Count()}");
     }
 
     static void ExecutePendindMigrationsOnExecutionTime()
     {
         using var db = GetContext();
         db.Database.Migrate();
+    }
+
+    static void GetAllMigrates()
+    {
+        using var db = GetContext();
+        var migrates = db.Database.GetMigrations();
+        Console.WriteLine($"Migrates:\n{string.Join("\n", migrates)}, Total Migrates: {migrates.Count()}");
     }
 }
