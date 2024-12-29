@@ -25,7 +25,8 @@ public class Program
         //HandleConnectionState(true);
 
         //ExecuteSQL();
-        SqlInjection();
+        //SqlInjection();
+        PendingMigrates();
     }
 
     static ApplicationDbContext GetContext() => new();
@@ -117,5 +118,12 @@ public class Program
 
         foreach (var department in db.Departments.AsNoTracking())
             Console.WriteLine($"ID: {department.Id}, DESCRIPTION: {department.Description}");
+    }
+
+    static void PendingMigrates()
+    {
+        using var db = GetContext();
+        var migratesPending = db.Database.GetPendingMigrations();
+        Console.WriteLine($"Migrates pending: {string.Join("\n ", migratesPending)}, Total Migrates: {migratesPending.Count()}");
     }
 }
