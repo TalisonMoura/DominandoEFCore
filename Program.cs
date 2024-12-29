@@ -17,12 +17,16 @@ public class Program
         //HealthCheckOnDataBse();
 
         //warmup
-        GetContext().Departments.AsNoTracking().Any();
+        //GetContext().Departments.AsNoTracking().Any();
         Count = 0;
-        HandleConnectionState(false);
+        //HandleConnectionState(false);
         Count = 0;
-        HandleConnectionState(true);
+        //HandleConnectionState(true);
+
+        ExecuteSQL();
     }
+
+    static ApplicationDbContext GetContext() => new();
 
     static void EnsureCreatedAndDeleted()
     {
@@ -73,5 +77,22 @@ public class Program
         Console.WriteLine($"TotalTime: {time.Elapsed}, {isHandleConnectionState}, {Count}");
     }
 
-    static ApplicationDbContext GetContext() => new();
+    static void ExecuteSQL()
+    {
+        using var db = GetContext();
+        using var cmd = db.Database.GetDbConnection().CreateCommand();
+        cmd.CommandText = "SELECT 1";
+        var rowsaffected = cmd.ExecuteNonQuery();
+
+        Console.WriteLine($"Number of rows affected: {rowsaffected}");
+
+        string rawCityName = "BH É NOISS";
+        Guid cityId = Guid.Parse("55D7CF2C-A4A3-4D16-9B0E-55519CBFD57A");
+        var rowsaffectedraw = db.Database.ExecuteSqlRaw("update from Cities set Name={0} where Id={1}", rawCityName, cityId);
+        Console.WriteLine($"Number of rows affected sqlraw: {rowsaffectedraw}");
+
+        string interpolatedCityName = "BH É NOISS <3 PRAÇA SETE, FOTO NA HORA É FOTO";
+        var rowsaffectedrawinterpolated = db.Database.ExecuteSqlInterpolated($"update from Cities set Name={interpolatedCityName} where Id={cityId}");
+        Console.WriteLine($"Number of rows affected sqlraw: {rowsaffectedrawinterpolated}");
+    }
 }
