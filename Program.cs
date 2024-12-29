@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using DominandoEFCore.Data;
+using DominandoEFCore.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -23,7 +24,8 @@ public class Program
         Count = 0;
         //HandleConnectionState(true);
 
-        ExecuteSQL();
+        //ExecuteSQL();
+        SqlInjection();
     }
 
     static ApplicationDbContext GetContext() => new();
@@ -31,7 +33,7 @@ public class Program
     static void EnsureCreatedAndDeleted()
     {
         using var db = GetContext();
-        //db.Database.EnsureCreated();
+        db.Database.EnsureCreated();
         db.Database.EnsureDeleted();
     }
 
@@ -88,11 +90,32 @@ public class Program
 
         string rawCityName = "BH É NOISS";
         Guid cityId = Guid.Parse("55D7CF2C-A4A3-4D16-9B0E-55519CBFD57A");
-        var rowsaffectedraw = db.Database.ExecuteSqlRaw("update from Cities set Name={0} where Id={1}", rawCityName, cityId);
+        var rowsaffectedraw = db.Database.ExecuteSqlRaw("update Cities set Name={0} where Id={1}", rawCityName, cityId);
         Console.WriteLine($"Number of rows affected sqlraw: {rowsaffectedraw}");
 
         string interpolatedCityName = "BH É NOISS <3 PRAÇA SETE, FOTO NA HORA É FOTO";
-        var rowsaffectedrawinterpolated = db.Database.ExecuteSqlInterpolated($"update from Cities set Name={interpolatedCityName} where Id={cityId}");
-        Console.WriteLine($"Number of rows affected sqlraw: {rowsaffectedrawinterpolated}");
+        var rowsaffectedinterpolated = db.Database.ExecuteSqlInterpolated($"update Cities set Name={interpolatedCityName} where Id={cityId}");
+        Console.WriteLine($"Number of rows affected sqlinterpolated: {rowsaffectedinterpolated}");
+    }
+
+    static void SqlInjection()
+    {
+        using var db = GetContext();
+        db.Database.EnsureDeleted();
+        GapEnsureCreated();
+
+        db.Departments.AddRange
+        (
+            new Department { Description = "Department 1" },
+            new Department { Description = "Department 2" }
+        );
+
+        db.SaveChanges();
+
+        string description = "Teste ' or 1=' 1";
+        var rowsaffectedraw = db.Database.ExecuteSqlRaw($"update Departments set Description='AttackSqlIjection' where Description='{description}'");
+
+        foreach (var department in db.Departments.AsNoTracking())
+            Console.WriteLine($"ID: {department.Id}, DESCRIPTION: {department.Description}");
     }
 }
