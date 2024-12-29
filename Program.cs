@@ -1,4 +1,6 @@
-﻿using DominandoEFCore.Data;
+﻿using System.Diagnostics;
+using DominandoEFCore.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
@@ -6,23 +8,32 @@ namespace DominandoEFCore;
 
 public class Program
 {
+    public static int Count { get; set; }
+
     private static void Main(string[] args)
     {
-        HealthCheckOnDataBse();
-        //GanEnsureCreated();
         //EnsureCreatedAndDeleted();
+        //GapEnsureCreated();
+        //HealthCheckOnDataBse();
+
+        //warmup
+        GetContext().Departments.AsNoTracking().Any();
+        Count = 0;
+        HandleConnectionState(false);
+        Count = 0;
+        HandleConnectionState(true);
     }
 
     static void EnsureCreatedAndDeleted()
     {
-        using var db = new ApplicationDbContext();
+        using var db = GetContext();
         //db.Database.EnsureCreated();
         db.Database.EnsureDeleted();
     }
 
-    static void GanEnsureCreated()
+    static void GapEnsureCreated()
     {
-        using var dbDefault = new ApplicationDbContext();
+        using var dbDefault = GetContext();
         using var dbCity = new ApplicationDbContextCity();
 
         dbDefault.Database.EnsureCreated();
@@ -34,12 +45,33 @@ public class Program
 
     static void HealthCheckOnDataBse()
     {
-        using var db = new ApplicationDbContext();
+        using var db = GetContext();
         var canConnect = db.Database.CanConnect();
 
-        if (canConnect ) 
+        if (canConnect)
             Console.WriteLine("I'm able to connect");
         else
             Console.WriteLine("I'm not able to connect");
     }
+
+    static void HandleConnectionState(bool isHandleConnectionState)
+    {
+        using var db = GetContext();
+        var time = Stopwatch.StartNew();
+
+        var connection = db.Database.GetDbConnection();
+
+        connection.StateChange += (_, _) => ++Count;
+
+        if (isHandleConnectionState)
+            connection.Open();
+
+        for (int i = 0; i < 200; i++)
+            db.Departments.AsNoTracking().Any();
+
+        time.Stop();
+        Console.WriteLine($"TotalTime: {time.Elapsed}, {isHandleConnectionState}, {Count}");
+    }
+
+    static ApplicationDbContext GetContext() => new();
 }
