@@ -9,6 +9,7 @@ public class ModuleDeepDrive
     public ModuleDeepDrive()
     {
         AdvanceLoading();
+        ExplicitLoading();
     }
 
     static ApplicationDbContext GetContext() => new();
@@ -44,6 +45,29 @@ public class ModuleDeepDrive
 
             context.SaveChanges();
             context.ChangeTracker.Clear();
+        }
+    }
+
+    static void ExplicitLoading()
+    {
+        using var db = GetContext();
+        SetupLoadingType(db);
+
+        var departments = db.Departments.ToList();
+
+        foreach (var department in departments)
+        {
+            if (department.Id != Guid.NewGuid())
+                _ = db.Entry(department).Collection(d => d.Employees).Query().Where(e => e.Id != Guid.Empty).ToList();
+
+            Console.WriteLine("---------------------------------------------------------------");
+            Console.WriteLine($"Department: {department.Description}");
+
+            if (department.Employees?.Count > 0)
+                foreach (var employee in department.Employees)
+                    Console.WriteLine($"\tEmployee: {employee.Name}");
+            else
+                Console.WriteLine("\t No employees were found");
         }
     }
 }
