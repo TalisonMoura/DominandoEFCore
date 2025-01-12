@@ -1,5 +1,6 @@
 ﻿using DominandoEFCore.Data;
 using DominandoEFCore.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DominandoEFCore.Modules;
 
@@ -7,7 +8,8 @@ public class Queries
 {
     public Queries()
     {
-        ProjectedQeuerie();
+        //ProjectedQeuerie();
+        ProjectedQeuerieRaw();
     }
 
     static ApplicationDbContext GetContext() => new();
@@ -36,8 +38,18 @@ public class Queries
 
         departments?.ForEach(x =>
         {
-            Console.WriteLine($"Description: {x.Description}"); 
+            Console.WriteLine($"Description: {x.Description}");
             x.Employess.ForEach(e => Console.WriteLine($"\t Name: {e}"));
         });
+    }
+
+    static void ProjectedQeuerieRaw()
+    {
+        using var db = GetContext();
+        SetupLoadingType(db);
+
+        var departments = db.Departments.FromSqlRaw("select * from Departments WITH(NOLOCK)").ToList();
+
+        departments?.ForEach(x => Console.WriteLine($"Description: {x.Description}"));
     }
 }

@@ -15,7 +15,6 @@ public class ApplicationDbContext : DbContext
 
         optionsBuilder.UseSqlServer(connectionString, ctxOptsBuilder => ctxOptsBuilder.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null))
             .EnableSensitiveDataLogging()
-            .UseLazyLoadingProxies()
             .LogTo(Console.WriteLine, LogLevel.Information);
     }
 }
