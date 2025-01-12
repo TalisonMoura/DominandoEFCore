@@ -9,9 +9,10 @@ public class Queries
     public Queries()
     {
         //ProjectedQeuerie();
-        //ProjectedQeuerieRaw();
-        //ProjectedQeuerieInterpolated();
-        ProjectedQeuerieIWithTag();
+        //QeuerieRaw();
+        //QeuerieInterpolated();
+        //QeuerieIWithTag();
+        Qeuerie1NN1();
     }
 
     static ApplicationDbContext GetContext() => new();
@@ -45,7 +46,7 @@ public class Queries
         });
     }
 
-    static void ProjectedQeuerieRaw()
+    static void QeuerieRaw()
     {
         using var db = GetContext();
         SetupLoadingType(db);
@@ -55,7 +56,7 @@ public class Queries
         departments?.ForEach(x => Console.WriteLine($"Description: {x.Description}"));
     }
 
-    static void ProjectedQeuerieInterpolated()
+    static void QeuerieInterpolated()
     {
         using var db = GetContext();
         SetupLoadingType(db);
@@ -65,7 +66,7 @@ public class Queries
         departments?.ForEach(x => Console.WriteLine($"Description: {x.Description}"));
     }
 
-    static void ProjectedQeuerieIWithTag()
+    static void QeuerieIWithTag()
     {
         using var db = GetContext();
         SetupLoadingType(db);
@@ -74,4 +75,18 @@ public class Queries
 
         departments?.ForEach(x => Console.WriteLine($"Description: {x.Description}"));
     }
+
+    static void Qeuerie1NN1()
+    {
+        using var db = GetContext();
+        SetupLoadingType(db);
+
+        var departments = db.Departments.Include(x => x.Employees).ToList();
+        departments?.ForEach(x => x.Employees.ForEach(e => Console.WriteLine($"Description: {e.Name}")));
+
+        var employess = db.Employees.Include(x => x.Department).ToList();
+        employess?.ForEach(x => Console.WriteLine($"Description: {x.Name}, Department: {x.Department.Description}"));
+    }
+
+
 }
