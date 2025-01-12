@@ -12,7 +12,8 @@ public class Queries
         //QeuerieRaw();
         //QeuerieInterpolated();
         //QeuerieIWithTag();
-        Qeuerie1NN1();
+        //Qeuerie1NN1();
+        QeuerieAsSplitQuery();
     }
 
     static ApplicationDbContext GetContext() => new();
@@ -88,5 +89,12 @@ public class Queries
         employess?.ForEach(x => Console.WriteLine($"Description: {x.Name}, Department: {x.Department.Description}"));
     }
 
+    static void QeuerieAsSplitQuery()
+    {
+        using var db = GetContext();
+        SetupLoadingType(db);
 
+        var departments = db.Departments.Include(x => x.Employees).Where(x => x.Id != Guid.Empty).AsSplitQuery().ToList();
+        departments?.ForEach(x => x.Employees.ForEach(e => Console.WriteLine($"Description: {e.Name}")));
+    }
 }
