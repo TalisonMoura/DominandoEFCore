@@ -9,7 +9,8 @@ public class Queries
     public Queries()
     {
         //ProjectedQeuerie();
-        ProjectedQeuerieRaw();
+        //ProjectedQeuerieRaw();
+        ProjectedQeuerieInterpolated();
     }
 
     static ApplicationDbContext GetContext() => new();
@@ -48,7 +49,17 @@ public class Queries
         using var db = GetContext();
         SetupLoadingType(db);
 
-        var departments = db.Departments.FromSqlRaw("select * from Departments WITH(NOLOCK)").ToList();
+        var departments = db.Departments.FromSqlRaw("select * from Departments").ToList();
+
+        departments?.ForEach(x => Console.WriteLine($"Description: {x.Description}"));
+    }
+
+    static void ProjectedQeuerieInterpolated()
+    {
+        using var db = GetContext();
+        SetupLoadingType(db);
+
+        var departments = db.Departments.FromSqlInterpolated($"select * from Departments D where D.Id != {Guid.Empty}").ToList();
 
         departments?.ForEach(x => Console.WriteLine($"Description: {x.Description}"));
     }
