@@ -36,7 +36,8 @@ public class Queries
 
         departments?.ForEach(x =>
         {
-            Console.WriteLine($"Description: {x.Description}"); x.Employess.ForEach(e => Console.WriteLine($"\t Name: {e}"));
+            Console.WriteLine($"Description: {x.Description}"); 
+            x.Employess.ForEach(e => Console.WriteLine($"\t Name: {e}"));
         });
     }
 }

@@ -9,7 +9,8 @@ public class ModuleDeepDrive
     public ModuleDeepDrive()
     {
         //AdvanceLoading();
-        ExplicitLoading();
+        //ExplicitLoading();
+        LazyLoading();
     }
 
     static ApplicationDbContext GetContext() => new();
@@ -52,6 +53,31 @@ public class ModuleDeepDrive
     {
         using var db = GetContext();
         SetupLoadingType(db);
+
+        var departments = db.Departments.ToList();
+
+        foreach (var department in departments)
+        {
+            if (department.Id != Guid.NewGuid())
+                _ = db.Entry(department).Collection(d => d.Employees).Query().Where(e => e.Id != Guid.Empty).ToList();
+
+            Console.WriteLine("---------------------------------------------------------------");
+            Console.WriteLine($"Department: {department.Description}");
+
+            if (department.Employees?.Count > 0)
+                foreach (var employee in department.Employees)
+                    Console.WriteLine($"\tEmployee: {employee.Name}");
+            else
+                Console.WriteLine("\t No employees were found");
+        }
+    }
+
+    static void LazyLoading()
+    {
+        using var db = GetContext();
+        SetupLoadingType(db);
+
+        db.ChangeTracker.LazyLoadingEnabled = false; // Para desabilitar o Lazy Loading
 
         var departments = db.Departments.ToList();
 
