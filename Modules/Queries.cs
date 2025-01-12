@@ -10,7 +10,8 @@ public class Queries
     {
         //ProjectedQeuerie();
         //ProjectedQeuerieRaw();
-        ProjectedQeuerieInterpolated();
+        //ProjectedQeuerieInterpolated();
+        ProjectedQeuerieIWithTag();
     }
 
     static ApplicationDbContext GetContext() => new();
@@ -60,6 +61,16 @@ public class Queries
         SetupLoadingType(db);
 
         var departments = db.Departments.FromSqlInterpolated($"select * from Departments D where D.Id != {Guid.Empty}").ToList();
+
+        departments?.ForEach(x => Console.WriteLine($"Description: {x.Description}"));
+    }
+
+    static void ProjectedQeuerieIWithTag()
+    {
+        using var db = GetContext();
+        SetupLoadingType(db);
+
+        var departments = db.Departments.TagWith("I'm just testing the server").ToList();
 
         departments?.ForEach(x => Console.WriteLine($"Description: {x.Description}"));
     }
