@@ -1,6 +1,7 @@
 ﻿using DominandoEFCore.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace DominandoEFCore.Data;
 
@@ -15,6 +16,10 @@ public class ApplicationDbContext : DbContext
 
         optionsBuilder.UseSqlServer(connectionString, ctxOptsBuilder => ctxOptsBuilder.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null))
             .EnableSensitiveDataLogging()
-            .LogTo(Console.WriteLine, LogLevel.Information);
+            .LogTo(
+            Console.WriteLine, 
+            [CoreEventId.ContextInitialized, RelationalEventId.CommandExecuted], 
+            LogLevel.Information,
+            DbContextLoggerOptions.LocalTime | DbContextLoggerOptions.SingleLine);
     }
 }

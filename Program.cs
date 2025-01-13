@@ -9,6 +9,7 @@ public class Program
         //_ = new ModuleEfDatabase();
         //_ = new ModuleDeepDrive();
         //_ = new Queries();
-        _ = new StoredProcedures();
+        //_ = new StoredProcedures();
+        _ = new Infraestructure();
     }
 }
