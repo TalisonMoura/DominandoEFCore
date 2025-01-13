@@ -9,6 +9,7 @@ public class ApplicationDbContext : DbContext
 {
     public DbSet<Employee> Employees { get; set; }
     public DbSet<Department> Departments { get; set; }
+    private readonly StreamWriter _streamer = new("T:\\ProjetosEstudo\\ProjetosC#\\DominandoEFCore\\ef_core_log.txt", append: true);
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -16,10 +17,16 @@ public class ApplicationDbContext : DbContext
 
         optionsBuilder.UseSqlServer(connectionString, ctxOptsBuilder => ctxOptsBuilder.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null))
             .EnableSensitiveDataLogging()
-            .LogTo(
-            Console.WriteLine, 
-            [CoreEventId.ContextInitialized, RelationalEventId.CommandExecuted], 
-            LogLevel.Information,
-            DbContextLoggerOptions.LocalTime | DbContextLoggerOptions.SingleLine);
+            .LogTo(_streamer.WriteLine
+            /*Console.WriteLine, 
+            //[CoreEventId.ContextInitialized, RelationalEventId.CommandExecuted], 
+            //LogLevel.Information,
+            //DbContextLoggerOptions.LocalTime | DbContextLoggerOptions.SingleLine*/);
+    }
+
+    public override void Dispose()
+    {
+        base.Dispose();
+        _streamer.Dispose();
     }
 }
