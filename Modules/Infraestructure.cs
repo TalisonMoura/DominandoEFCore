@@ -43,7 +43,7 @@ public class Infraestructure
     void GeneralCommand()
     {
         using var db = _dbContext;
-
+        db.Database.SetCommandTimeout(10);
         db.Database.ExecuteSqlRaw("WAITFOR DELAY '00:00:07'; SELECT 1");
     }
 }
