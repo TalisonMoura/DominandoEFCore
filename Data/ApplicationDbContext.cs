@@ -15,13 +15,9 @@ public class ApplicationDbContext : DbContext
     {
         const string connectionString = "Server=TALISONJM\\SQLEXPRESS;Database=DominandoEfCore;Integrated Security=true;TrustServerCertificate=True;pooling=true";
 
-        optionsBuilder.UseSqlServer(connectionString, ctxOptsBuilder => ctxOptsBuilder.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null))
+        optionsBuilder.UseSqlServer(connectionString, ctxOptsBuilder => { ctxOptsBuilder.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null); ctxOptsBuilder.MaxBatchSize(100); })
             .EnableSensitiveDataLogging()
-            //.EnableDetailedErrors();
             .LogTo(Console.WriteLine);
-            //[CoreEventId.ContextInitialized, RelationalEventId.CommandExecuted], 
-            //LogLevel.Information,
-            //DbContextLoggerOptions.LocalTime | DbContextLoggerOptions.SingleLine);
     }
 
     public override void Dispose()

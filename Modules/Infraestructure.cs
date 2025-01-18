@@ -10,7 +10,8 @@ public class Infraestructure
     {
         _dbContext = new();
         //GetDepartments();
-        SensitiveData();
+        //SensitiveData();
+        EnableBatchSize();
     }
 
     void GetDepartments()
@@ -23,5 +24,17 @@ public class Infraestructure
     {
         using var db = _dbContext;
         var departments = db.Departments.Where(x => x.Description == "Department").ToList();
+    }
+
+    void EnableBatchSize()
+    {
+        using var db = _dbContext;
+        db.Database.EnsureDeleted();
+        db.Database.EnsureCreated();
+
+        for (int i = 0; i < 50; i++)
+            db.Departments.Add(new() { Description = $"Department {i}" });
+
+        db.SaveChanges();
     }
 }
