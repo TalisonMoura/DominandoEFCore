@@ -1,4 +1,5 @@
 ﻿using DominandoEFCore.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace DominandoEFCore.Modules;
 
@@ -11,7 +12,8 @@ public class Infraestructure
         _dbContext = new();
         //GetDepartments();
         //SensitiveData();
-        EnableBatchSize();
+        //EnableBatchSize();
+        GeneralCommand();
     }
 
     void GetDepartments()
@@ -36,5 +38,12 @@ public class Infraestructure
             db.Departments.Add(new() { Description = $"Department {i}" });
 
         db.SaveChanges();
+    }
+
+    void GeneralCommand()
+    {
+        using var db = _dbContext;
+
+        db.Database.ExecuteSqlRaw("WAITFOR DELAY '00:00:07'; SELECT 1");
     }
 }

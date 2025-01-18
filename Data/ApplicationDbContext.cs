@@ -15,7 +15,7 @@ public class ApplicationDbContext : DbContext
     {
         const string connectionString = "Server=TALISONJM\\SQLEXPRESS;Database=DominandoEfCore;Integrated Security=true;TrustServerCertificate=True;pooling=true";
 
-        optionsBuilder.UseSqlServer(connectionString, ctxOptsBuilder => { ctxOptsBuilder.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null); ctxOptsBuilder.MaxBatchSize(100); })
+        optionsBuilder.UseSqlServer(connectionString, ctxOptsBuilder => { ctxOptsBuilder.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null); ctxOptsBuilder.MaxBatchSize(100).CommandTimeout(5); })
             .EnableSensitiveDataLogging()
             .LogTo(Console.WriteLine);
     }
