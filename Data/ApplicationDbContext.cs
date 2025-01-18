@@ -17,9 +17,8 @@ public class ApplicationDbContext : DbContext
 
         optionsBuilder.UseSqlServer(connectionString, ctxOptsBuilder => ctxOptsBuilder.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null))
             .EnableSensitiveDataLogging()
-            .EnableDetailedErrors();
-            //.LogTo(_streamer.WriteLine
-            //Console.WriteLine, 
+            //.EnableDetailedErrors();
+            .LogTo(Console.WriteLine);
             //[CoreEventId.ContextInitialized, RelationalEventId.CommandExecuted], 
             //LogLevel.Information,
             //DbContextLoggerOptions.LocalTime | DbContextLoggerOptions.SingleLine);

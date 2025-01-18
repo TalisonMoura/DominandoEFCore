@@ -9,9 +9,8 @@ public class Infraestructure
     public Infraestructure()
     {
         _dbContext = new();
-        GetDepartments();
-
-
+        //GetDepartments();
+        SensitiveData();
     }
 
     void GetDepartments()
@@ -20,5 +19,9 @@ public class Infraestructure
         var departments = db.Departments.Where(x => x.Id != Guid.Empty).ToList();
     }
 
-
+    void SensitiveData()
+    {
+        using var db = _dbContext;
+        var departments = db.Departments.Where(x => x.Description == "Department").ToList();
+    }
 }
