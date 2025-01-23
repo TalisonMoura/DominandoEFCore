@@ -21,8 +21,10 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.UseCollation("SQL_Latin1_General_CP1_CI_AI"); // collation being used as global case
+        //modelBuilder.UseCollation("SQL_Latin1_General_CP1_CI_AI"); // collation being used as global case
         modelBuilder.Entity<Department>().Property(x => x.Description).WithCollation(ECollationType.UnSentitive); // collation being used at a spesific property
+
+        modelBuilder.HasSequence<int>("MySequence", "sequences").StartsAt(1).IncrementsBy(2).HasMin(1).HasMax(100).IsCyclic();
     }
 }
 

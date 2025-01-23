@@ -1,4 +1,5 @@
-﻿using DominandoEFCore.Modules;
+﻿using DominandoEFCore.Data;
+using DominandoEFCore.Modules;
 
 namespace DominandoEFCore;
 
@@ -10,6 +11,6 @@ public class Program
         //_ = new ModuleDeepDrive();
         //_ = new Queries();
         //_ = new StoredProcedures();
-        _ = new Infraestructure();
+        //_ = new Infraestructure();
     }
 }
