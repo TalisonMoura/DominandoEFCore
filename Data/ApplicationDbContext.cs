@@ -1,7 +1,6 @@
 ﻿using DominandoEFCore.Models;
-using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DominandoEFCore.Data;
 
@@ -9,20 +8,41 @@ public class ApplicationDbContext : DbContext
 {
     public DbSet<Employee> Employees { get; set; }
     public DbSet<Department> Departments { get; set; }
-    private readonly StreamWriter _streamer = new("T:\\ProjetosEstudo\\ProjetosC#\\DominandoEFCore\\ef_core_log.txt", append: true);
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         const string connectionString = "Server=TALISONJM\\SQLEXPRESS;Database=DominandoEfCore;Integrated Security=true;TrustServerCertificate=True;pooling=true";
 
-        optionsBuilder.UseSqlServer(connectionString, ctxOptsBuilder => { ctxOptsBuilder.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null); ctxOptsBuilder.MaxBatchSize(100).CommandTimeout(5); })
+        optionsBuilder
+            .UseSqlServer(connectionString, ctxOptsBuilder => ctxOptsBuilder.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null))
             .EnableSensitiveDataLogging()
             .LogTo(Console.WriteLine);
     }
 
-    public override void Dispose()
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.Dispose();
-        _streamer.Dispose();
+        modelBuilder.UseCollation("SQL_Latin1_General_CP1_CI_AI"); // collation being used as global case
+        modelBuilder.Entity<Department>().Property(x => x.Description).WithCollation(ECollationType.UnSentitive); // collation being used at a spesific property
+    }
+}
+
+public enum ECollationType
+{
+    UnSentitive,
+    UnSentitiveCaseSensitiveAccent,
+    SentitiveCaseUnsensitiveAccent,
+}
+
+public static class EntityFrameworkExtensions
+{
+    public static PropertyBuilder<string> WithCollation(this PropertyBuilder<string> property, ECollationType? type = null)
+    {
+        return property.UseCollation(type switch
+        {
+            ECollationType.UnSentitive => "SQL_Latin1_General_CP1_CI_AI",
+            ECollationType.SentitiveCaseUnsensitiveAccent => "SQL_Latin1_General_CP1_CS_AI",
+            ECollationType.UnSentitiveCaseSensitiveAccent => "SQL_Latin1_General_CP1_CI_AS",
+            _ => "SQL_Latin1_General_CP1_CS_AS"
+        });
     }
 }
