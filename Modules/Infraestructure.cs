@@ -13,7 +13,8 @@ public class Infraestructure
         //GetDepartments();
         //SensitiveData();
         //EnableBatchSize();
-        GeneralCommand();
+        //GeneralCommand();
+        ExecuteResiliencyStrategy();
     }
 
     void GetDepartments()
@@ -45,5 +46,22 @@ public class Infraestructure
         using var db = _dbContext;
         db.Database.SetCommandTimeout(10);
         db.Database.ExecuteSqlRaw("WAITFOR DELAY '00:00:07'; SELECT 1");
+    }
+
+    void ExecuteResiliencyStrategy()
+    {
+        using var db = _dbContext;
+
+        var teste = db.Database;
+
+
+        db.Database.CreateExecutionStrategy().Execute(() =>
+        {
+            using var transaction = db.Database.BeginTransaction();
+
+            db.Departments.Add(new() { Description = "Department Transaction" });
+
+            transaction.Commit();
+        });
     }
 }
