@@ -6,6 +6,7 @@ namespace DominandoEFCore.Data;
 
 public class ApplicationDbContext : DbContext
 {
+    public DbSet<State> States { get; set; }
     public DbSet<Employee> Employees { get; set; }
     public DbSet<Department> Departments { get; set; }
 
@@ -22,9 +23,19 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         //modelBuilder.UseCollation("SQL_Latin1_General_CP1_CI_AI"); // collation being used as global case
-        modelBuilder.Entity<Department>().Property(x => x.Description).WithCollation(ECollationType.UnSentitive); // collation being used at a spesific property
+        //modelBuilder.Entity<Department>().Property(x => x.Description).WithCollation(ECollationType.UnSentitive); // collation being used at a spesific property
 
-        modelBuilder.HasSequence<int>("MySequence", "sequences").StartsAt(1).IncrementsBy(2).HasMin(1).HasMax(100).IsCyclic();
+        //modelBuilder.HasSequence<int>("MySequence", "sequences").StartsAt(1).IncrementsBy(2).HasMin(1).HasMax(100).IsCyclic();
+
+        /*modelBuilder.Entity<Department>()
+                    .HasIndex(i => new { i.Description, i.IsActive })
+                    .HasDatabaseName("idx_my_compost_index")
+                    .HasFilter("Descriptions IS NOT NULL")
+                    .HasFillFactor(80)
+                    .IsUnique(false); */// creating a compost index to handle the queries with more performance
+
+        modelBuilder.Entity<State>().HasData([new() { Id = Guid.NewGuid(), Name = "Minas Gerais" }, new() { Id = Guid.NewGuid(), Name = "Sergipe" }]);
+
     }
 }
 

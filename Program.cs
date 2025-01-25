@@ -12,5 +12,6 @@ public class Program
         //_ = new Queries();
         //_ = new StoredProcedures();
         //_ = new Infraestructure();
+        _ = new DataModels();
     }
 }
