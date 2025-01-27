@@ -17,6 +17,7 @@ namespace DominandoEFCore.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("registers")
                 .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
@@ -36,7 +37,7 @@ namespace DominandoEFCore.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Departments");
+                    b.ToTable("Departments", "registers");
                 });
 
             modelBuilder.Entity("DominandoEFCore.Models.Employee", b =>
@@ -61,7 +62,7 @@ namespace DominandoEFCore.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", "registers");
                 });
 
             modelBuilder.Entity("DominandoEFCore.Models.State", b =>
@@ -75,17 +76,17 @@ namespace DominandoEFCore.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("States");
+                    b.ToTable("States", "SecondScheme");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("ceaf7044-f8a1-4668-92bd-66f8347041d2"),
+                            Id = new Guid("7388f73e-3948-4d7c-9840-3fb688d9d11f"),
                             Name = "Minas Gerais"
                         },
                         new
                         {
-                            Id = new Guid("101032a1-55c2-4315-a14b-dba316689b56"),
+                            Id = new Guid("c34747c3-ad9e-4d25-ad8b-c47e51a035b4"),
                             Name = "Sergipe"
                         });
                 });

@@ -36,6 +36,9 @@ public class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<State>().HasData([new() { Id = Guid.NewGuid(), Name = "Minas Gerais" }, new() { Id = Guid.NewGuid(), Name = "Sergipe" }]);
 
+        modelBuilder.HasDefaultSchema("registers");
+
+        modelBuilder.Entity<State>().ToTable("States", "SecondScheme");
     }
 }
 
