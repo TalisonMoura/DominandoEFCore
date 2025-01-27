@@ -12,7 +12,8 @@ namespace DominandoEFCore.Modules
             _context = new();
             //Collations();
             //DataPropagation();
-            ValueConverter();
+            //ValueConverter();
+            CustomConverter();
         }
 
 
@@ -45,5 +46,18 @@ namespace DominandoEFCore.Modules
         }
 
         void ValueConverter() => Scheme();
+
+        void CustomConverter()
+        {
+            using var db = Ensures();
+
+            db.Converters.Add(new() { Status = Models.Status.Returned });
+
+            db.SaveChanges();
+
+            var inAnalisysConverter = db.Converters.AsNoTracking().FirstOrDefault(x => x.Status.Equals(Models.Status.InAnalysis));        
+            var returnedConverter = db.Converters.AsNoTracking().FirstOrDefault(x => x.Status.Equals(Models.Status.Returned));        
+        }
+
     }
 }

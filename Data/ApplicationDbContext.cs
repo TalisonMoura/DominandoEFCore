@@ -1,4 +1,5 @@
 ﻿using DominandoEFCore.Models;
+using DominandoEFCore.Models.Converters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -47,9 +48,13 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<Converter>()
             .Property(x => x.Version)
             .HasConversion(conversion);
-            //.HasConversion(new EnumToStringConverter<Models.Version>()); *** Some ways to create your converter data ***
-            //.HasConversion(x => x.ToString(), x => (Models.Version)Enum.Parse(typeof(Models.Version), x));
-            //.HasConversion<string>();
+        //.HasConversion(new EnumToStringConverter<Models.Version>()); *** Some ways to create your converter data ***
+        //.HasConversion(x => x.ToString(), x => (Models.Version)Enum.Parse(typeof(Models.Version), x));
+        //.HasConversion<string>();
+
+        modelBuilder.Entity<Converter>()
+            .Property(x => x.Status)
+            .HasConversion(new CustomConverter());
     }
 }
 
