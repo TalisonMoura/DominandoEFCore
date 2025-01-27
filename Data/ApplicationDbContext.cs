@@ -1,6 +1,7 @@
 ﻿using DominandoEFCore.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DominandoEFCore.Data;
 
@@ -8,6 +9,7 @@ public class ApplicationDbContext : DbContext
 {
     public DbSet<State> States { get; set; }
     public DbSet<Employee> Employees { get; set; }
+    public DbSet<Converter> Converters { get; set; }
     public DbSet<Department> Departments { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -34,11 +36,20 @@ public class ApplicationDbContext : DbContext
                     .HasFillFactor(80)
                     .IsUnique(false); */// creating a compost index to handle the queries with more performance
 
-        modelBuilder.Entity<State>().HasData([new() { Id = Guid.NewGuid(), Name = "Minas Gerais" }, new() { Id = Guid.NewGuid(), Name = "Sergipe" }]);
+        //modelBuilder.Entity<State>().HasData([new() { Id = Guid.NewGuid(), Name = "Minas Gerais" }, new() { Id = Guid.NewGuid(), Name = "Sergipe" }]);
 
-        modelBuilder.HasDefaultSchema("registers");
+        //modelBuilder.HasDefaultSchema("registers");
 
-        modelBuilder.Entity<State>().ToTable("States", "SecondScheme");
+        //modelBuilder.Entity<State>().ToTable("States", "SecondScheme");
+
+        var conversion = new ValueConverter<Models.Version, string>(x => x.ToString(), x => (Models.Version)Enum.Parse(typeof(Models.Version), x));
+
+        modelBuilder.Entity<Converter>()
+            .Property(x => x.Version)
+            .HasConversion(conversion);
+            //.HasConversion(new EnumToStringConverter<Models.Version>()); *** Some ways to create your converter data ***
+            //.HasConversion(x => x.ToString(), x => (Models.Version)Enum.Parse(typeof(Models.Version), x));
+            //.HasConversion<string>();
     }
 }
 

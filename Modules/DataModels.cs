@@ -11,7 +11,8 @@ namespace DominandoEFCore.Modules
         {
             _context = new();
             //Collations();
-            DataPropagation();
+            //DataPropagation();
+            ValueConverter();
         }
 
 
@@ -35,5 +36,14 @@ namespace DominandoEFCore.Modules
             var script = db.Database.GenerateCreateScript();
             Console.WriteLine(script);
         }
+
+        void Scheme()
+        {
+            using var db = _context;
+            var script = db.Database.GenerateCreateScript();
+            Console.WriteLine(script);
+        }
+
+        void ValueConverter() => Scheme();
     }
 }

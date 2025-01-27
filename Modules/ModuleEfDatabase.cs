@@ -46,13 +46,13 @@ public class ModuleEfDatabase
     static void GapEnsureCreated()
     {
         using var dbDefault = GetContext();
-        using var dbCity = new ApplicationDbContextCity();
+        //using var dbCity = new ApplicationDbContextCity();
 
         dbDefault.Database.EnsureCreated();
-        dbCity.Database.EnsureCreated();
+        //dbCity.Database.EnsureCreated();
 
-        var databaseCreator = dbCity.GetService<IRelationalDatabaseCreator>();
-        databaseCreator.CreateTables();
+        //var databaseCreator = dbCity.GetService<IRelationalDatabaseCreator>();
+        //databaseCreator.CreateTables();
     }
 
     static void HealthCheckOnDataBse()
