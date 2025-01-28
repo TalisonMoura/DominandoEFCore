@@ -55,6 +55,9 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<Converter>()
             .Property(x => x.Status)
             .HasConversion(new CustomConverter());
+
+        modelBuilder.Entity<Department>()
+            .Property<DateTime>("LastUpdate");
     }
 }
 

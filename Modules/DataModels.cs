@@ -1,4 +1,5 @@
 ﻿using DominandoEFCore.Data;
+using DominandoEFCore.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DominandoEFCore.Modules
@@ -13,7 +14,8 @@ namespace DominandoEFCore.Modules
             //Collations();
             //DataPropagation();
             //ValueConverter();
-            CustomConverter();
+            //CustomConverter();
+            WorkingWithShadowProperty();
         }
 
 
@@ -55,9 +57,25 @@ namespace DominandoEFCore.Modules
 
             db.SaveChanges();
 
-            var inAnalisysConverter = db.Converters.AsNoTracking().FirstOrDefault(x => x.Status.Equals(Models.Status.InAnalysis));        
-            var returnedConverter = db.Converters.AsNoTracking().FirstOrDefault(x => x.Status.Equals(Models.Status.Returned));        
+            var inAnalisysConverter = db.Converters.AsNoTracking().FirstOrDefault(x => x.Status.Equals(Models.Status.InAnalysis));
+            var returnedConverter = db.Converters.AsNoTracking().FirstOrDefault(x => x.Status.Equals(Models.Status.Returned));
         }
 
+        void WorkingWithShadowProperty()
+        {
+            using var db = Ensures();
+
+            //var department = new Department() { Description = "Shadow Property Department" };
+
+            //db.Departments.Add(department);
+
+            //db.Entry(department).Property("LastUpdate").CurrentValue = DateTime.Now;
+
+            //db.SaveChanges();
+
+            var departments = db.Departments.Where(x => EF.Property<DateTime>(x, "LastUpdate") < DateTime.Now).ToArray();
+
+
+        }
     }
 }
