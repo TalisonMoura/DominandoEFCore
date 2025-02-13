@@ -9,6 +9,7 @@ namespace DominandoEFCore.Data;
 public class ApplicationDbContext : DbContext
 {
     public DbSet<State> States { get; set; }
+    public DbSet<Client> Clients { get; set; }
     public DbSet<Employee> Employees { get; set; }
     public DbSet<Converter> Converters { get; set; }
     public DbSet<Department> Departments { get; set; }
@@ -43,21 +44,31 @@ public class ApplicationDbContext : DbContext
 
         //modelBuilder.Entity<State>().ToTable("States", "SecondScheme");
 
-        var conversion = new ValueConverter<Models.Version, string>(x => x.ToString(), x => (Models.Version)Enum.Parse(typeof(Models.Version), x));
+        //var conversion = new ValueConverter<Models.Version, string>(x => x.ToString(), x => (Models.Version)Enum.Parse(typeof(Models.Version), x));
 
-        modelBuilder.Entity<Converter>()
-            .Property(x => x.Version)
-            .HasConversion(conversion);
-        //.HasConversion(new EnumToStringConverter<Models.Version>()); *** Some ways to create your converter data ***
-        //.HasConversion(x => x.ToString(), x => (Models.Version)Enum.Parse(typeof(Models.Version), x));
-        //.HasConversion<string>();
+        //modelBuilder.Entity<Converter>()
+        //    .Property(x => x.Version)
+        //    .HasConversion(conversion);
+        ////.HasConversion(new EnumToStringConverter<Models.Version>()); *** Some ways to create your converter data ***
+        ////.HasConversion(x => x.ToString(), x => (Models.Version)Enum.Parse(typeof(Models.Version), x));
+        ////.HasConversion<string>();
 
-        modelBuilder.Entity<Converter>()
-            .Property(x => x.Status)
-            .HasConversion(new CustomConverter());
+        //modelBuilder.Entity<Converter>()
+        //    .Property(x => x.Status)
+        //    .HasConversion(new CustomConverter());
 
-        modelBuilder.Entity<Department>()
-            .Property<DateTime>("LastUpdate");
+        //modelBuilder.Entity<Department>()
+        //    .Property<DateTime>("LastUpdate");
+
+        modelBuilder.Entity<Client>(c =>
+        {
+            c.OwnsOne(x => x.Address, address =>
+            {
+                address.Property(x => x.NeiborHood).HasColumnName("NeiborHood");
+                address.ToTable("Address");
+            });
+        });
+
     }
 }
 

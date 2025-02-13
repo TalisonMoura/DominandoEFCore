@@ -1,6 +1,7 @@
 ﻿using DominandoEFCore.Data;
 using DominandoEFCore.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace DominandoEFCore.Modules
 {
@@ -15,7 +16,8 @@ namespace DominandoEFCore.Modules
             //DataPropagation();
             //ValueConverter();
             //CustomConverter();
-            WorkingWithShadowProperty();
+            //WorkingWithShadowProperty();
+            PropertiesType();
         }
 
 
@@ -74,8 +76,22 @@ namespace DominandoEFCore.Modules
             //db.SaveChanges();
 
             var departments = db.Departments.Where(x => EF.Property<DateTime>(x, "LastUpdate") < DateTime.Now).ToArray();
+        }
 
+        void PropertiesType()
+        {
+            using var db = Ensures();
 
+            db.Clients.Add(new Client() { Name = "Talison de Jesus Moura", CellPhone = "31980120850", Address = new() { NeiborHood = "Aparecida", City = "Belo Horizonte" } });
+
+            db.SaveChanges();
+
+            var clients = db.Clients.AsNoTracking().ToList();
+
+            var options = new JsonSerializerOptions { WriteIndented = true };
+
+            foreach (var client in clients)
+                Console.WriteLine(JsonSerializer.Serialize(client, options));
         }
     }
 }
