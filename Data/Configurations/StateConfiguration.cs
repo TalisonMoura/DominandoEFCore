@@ -13,6 +13,12 @@ public class StateConfiguration : IEntityTypeConfiguration<State>
             .WithOne(g => g.State)
             .HasForeignKey<Goverment>(g => g.StateId);
 
+        builder
+            .HasMany(x => x.Cities)
+            .WithOne(x => x.State)
+            .HasForeignKey(x => x.StateId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Navigation(x => x.Goverment).AutoInclude();
     }
 }

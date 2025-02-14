@@ -18,7 +18,8 @@ namespace DominandoEFCore.Modules
             //CustomConverter();
             //WorkingWithShadowProperty();
             //PropertiesType();
-            Relationship1To1();
+            //Relationship1To1();
+            Relationship1ToN();
         }
 
 
@@ -99,7 +100,7 @@ namespace DominandoEFCore.Modules
         {
             using var db = Ensures();
 
-            db.States.Add(new State { Name = "Belo Horizonte", Goverment = new() { Name = "Talison de Jesus Moura" } });
+            db.States.Add(new State { Name = "Minas Gerais", Goverment = new() { Name = "Talison de Jesus Moura" } });
 
             db.SaveChanges();
 
@@ -108,6 +109,30 @@ namespace DominandoEFCore.Modules
             foreach (var state in states)
                 Console.WriteLine($"State: {state.Name}, Goverment: {state.Goverment.Name}");
 
+        }
+
+        void Relationship1ToN()
+        {
+            using var db = Ensures();
+
+            db.States.Add(new State { Name = "Minas Gerais", Goverment = new() { Name = "Talison de Jesus Moura" } }.AddCitie(new() { Name = "Belo Horizonte" }));
+
+            db.SaveChanges();
+
+            using var database = _context;
+
+            var states = database.States.ToList();
+
+            states[0].AddCitie(new() { Name = "Contagem" });
+
+            database.SaveChanges();
+
+            foreach (var state in database.States.Include(x => x.Cities).AsNoTracking())
+            {
+                Console.WriteLine($"State: {state.Name}, Goverment: {state.Goverment.Name}");
+                foreach (var city in state.Cities)
+                    Console.WriteLine($"\t City: {city.Name}");
+            }
         }
     }
 }
