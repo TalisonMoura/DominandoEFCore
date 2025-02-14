@@ -1,8 +1,6 @@
 ﻿using DominandoEFCore.Models;
-using DominandoEFCore.Models.Converters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DominandoEFCore.Data;
 
@@ -60,15 +58,9 @@ public class ApplicationDbContext : DbContext
         //modelBuilder.Entity<Department>()
         //    .Property<DateTime>("LastUpdate");
 
-        modelBuilder.Entity<Client>(c =>
-        {
-            c.OwnsOne(x => x.Address, address =>
-            {
-                address.Property(x => x.NeiborHood).HasColumnName("NeiborHood");
-                address.ToTable("Address");
-            });
-        });
-
+        // two diffent ways to register your entity type configuration class
+        //modelBuilder.ApplyConfiguration(new ClientConfigurations());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }
 }
 

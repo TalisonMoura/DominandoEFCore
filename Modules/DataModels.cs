@@ -17,7 +17,8 @@ namespace DominandoEFCore.Modules
             //ValueConverter();
             //CustomConverter();
             //WorkingWithShadowProperty();
-            PropertiesType();
+            //PropertiesType();
+            Relationship1To1();
         }
 
 
@@ -92,6 +93,21 @@ namespace DominandoEFCore.Modules
 
             foreach (var client in clients)
                 Console.WriteLine(JsonSerializer.Serialize(client, options));
+        }
+
+        void Relationship1To1()
+        {
+            using var db = Ensures();
+
+            db.States.Add(new State { Name = "Belo Horizonte", Goverment = new() { Name = "Talison de Jesus Moura" } });
+
+            db.SaveChanges();
+
+            var states = db.States.AsNoTracking().ToList();
+
+            foreach (var state in states)
+                Console.WriteLine($"State: {state.Name}, Goverment: {state.Goverment.Name}");
+
         }
     }
 }
