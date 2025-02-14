@@ -1,7 +1,7 @@
-﻿using DominandoEFCore.Data;
+﻿using System.Text.Json;
+using DominandoEFCore.Data;
 using DominandoEFCore.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 
 namespace DominandoEFCore.Modules
 {
@@ -19,7 +19,8 @@ namespace DominandoEFCore.Modules
             //WorkingWithShadowProperty();
             //PropertiesType();
             //Relationship1To1();
-            Relationship1ToN();
+            //Relationship1ToN();
+            RelationshipNtoN();
         }
 
 
@@ -132,6 +133,41 @@ namespace DominandoEFCore.Modules
                 Console.WriteLine($"State: {state.Name}, Goverment: {state.Goverment.Name}");
                 foreach (var city in state.Cities)
                     Console.WriteLine($"\t City: {city.Name}");
+            }
+        }
+
+        void RelationshipNtoN()
+        {
+            using var db = Ensures();
+
+            var actor1 = new Actor { Id = Guid.NewGuid(), Name = "Mourão" };
+            var actor2 = new Actor { Id = Guid.NewGuid(), Name = "MouraMal" };
+            var actor3 = new Actor { Id = Guid.NewGuid(), Name = "Taleco" };
+
+            var movie1 = new Movie { Id = Guid.NewGuid(), Description = "Plin" };
+            var movie2 = new Movie { Id = Guid.NewGuid(), Description = "Plon" };
+            var movie3 = new Movie { Id = Guid.NewGuid(), Description = "Plun" };
+
+            db.AddRange(actor1, actor2, actor3, movie1, movie2, movie3);
+
+            actor1.Movies.Add(new(actor1.Id, movie1.Id));
+            actor1.Movies.Add(new(actor1.Id, movie2.Id));
+
+            actor2.Movies.Add(new(actor2.Id, movie1.Id));
+
+            movie3.Actors.Add(new(actor1.Id, movie3.Id));
+            movie3.Actors.Add(new(actor2.Id, movie3.Id));
+            movie3.Actors.Add(new(actor3.Id, movie3.Id));
+
+            db.AddRange(actor1, actor2, movie3);
+
+            db.SaveChanges();
+
+            foreach (var actor in db.Actors.Include(x => x.Movies))
+            {
+                Console.WriteLine($"Actor {actor.Name}");
+                foreach (var movie in actor.Movies)
+                    Console.WriteLine($"\t Movie: {movie.Movie.Description}");
             }
         }
     }

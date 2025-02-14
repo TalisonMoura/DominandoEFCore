@@ -6,11 +6,14 @@ namespace DominandoEFCore.Data;
 
 public class ApplicationDbContext : DbContext
 {
+    public DbSet<Actor> Actors { get; set; }
+    public DbSet<Movie> Movies { get; set; }
     public DbSet<State> States { get; set; }
     public DbSet<Client> Clients { get; set; }
     public DbSet<Employee> Employees { get; set; }
     public DbSet<Converter> Converters { get; set; }
     public DbSet<Department> Departments { get; set; }
+    public DbSet<ActorMovie> ActorMovies { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -61,26 +64,5 @@ public class ApplicationDbContext : DbContext
         // two diffent ways to register your entity type configuration class
         //modelBuilder.ApplyConfiguration(new ClientConfigurations());
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
-    }
-}
-
-public enum ECollationType
-{
-    UnSentitive,
-    UnSentitiveCaseSensitiveAccent,
-    SentitiveCaseUnsensitiveAccent,
-}
-
-public static class EntityFrameworkExtensions
-{
-    public static PropertyBuilder<string> WithCollation(this PropertyBuilder<string> property, ECollationType? type = null)
-    {
-        return property.UseCollation(type switch
-        {
-            ECollationType.UnSentitive => "SQL_Latin1_General_CP1_CI_AI",
-            ECollationType.SentitiveCaseUnsensitiveAccent => "SQL_Latin1_General_CP1_CS_AI",
-            ECollationType.UnSentitiveCaseSensitiveAccent => "SQL_Latin1_General_CP1_CI_AS",
-            _ => "SQL_Latin1_General_CP1_CS_AS"
-        });
     }
 }
