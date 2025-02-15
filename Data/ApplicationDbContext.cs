@@ -1,6 +1,5 @@
 ﻿using DominandoEFCore.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DominandoEFCore.Data;
 
@@ -10,8 +9,12 @@ public class ApplicationDbContext : DbContext
     public DbSet<Movie> Movies { get; set; }
     public DbSet<State> States { get; set; }
     public DbSet<Client> Clients { get; set; }
+    public DbSet<Person> Persons { get; set; }
+    public DbSet<Student> Students { get; set; }
+    public DbSet<Document> Documents { get; set; }
     public DbSet<Employee> Employees { get; set; }
     public DbSet<Converter> Converters { get; set; }
+    public DbSet<Instructor> Instructors { get; set; }
     public DbSet<Department> Departments { get; set; }
     public DbSet<ActorMovie> ActorMovies { get; set; }
 

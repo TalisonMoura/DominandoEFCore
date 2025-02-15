@@ -20,7 +20,9 @@ namespace DominandoEFCore.Modules
             //PropertiesType();
             //Relationship1To1();
             //Relationship1ToN();
-            RelationshipNtoN();
+            //RelationshipNtoN();
+            //BackingField();
+            TPHExample();
         }
 
 
@@ -169,6 +171,53 @@ namespace DominandoEFCore.Modules
                 foreach (var movie in actor.Movies)
                     Console.WriteLine($"\t Movie: {movie.Movie.Description}");
             }
+        }
+
+        void BackingField()
+        {
+            using var db = Ensures();
+
+            var document = new Document();
+            document.SetCpf("12365498701");
+
+            db.Documents.Add(document);
+            db.SaveChanges();
+
+            foreach (var doc in db.Documents.AsNoTracking())
+                Console.WriteLine($"Cpf -> {doc.Cpf()}");
+        }
+
+        void TPHExample()
+        {
+            using var db = Ensures();
+
+            var person = new Person { Name = "Language connect people" };
+
+            var instructor = new Instructor { Name = "la vie in rose", Tecnology = ".Net", Since = DateTime.UtcNow };
+
+            var student = new Student { Name = "Betllejuice", Age = 31, ContractDate = DateTime.UtcNow.AddDays(-1) };
+
+            db.AddRange(person, instructor, student);
+            db.SaveChanges();
+
+            //var persons = db.Persons.AsNoTracking().ToArray();
+            var persons = db.Persons.OfType<Student>().AsNoTracking().ToArray();
+
+            var instructors = db.Instructors.AsNoTracking().ToArray();
+            var students = db.Students.AsNoTracking().ToArray();
+
+            Console.WriteLine("***** Persons *****");
+            foreach (var p in persons)
+                Console.WriteLine($"Id: {p.Id} -> {p.Name}");
+
+            Console.WriteLine("***** Instructors *****");
+            foreach (var i in instructors)
+                Console.WriteLine($"Id: {i.Id} -> {i.Name}, Tecnology: {i.Tecnology}, Since: {i.Since}");
+
+            Console.WriteLine("***** Students *****");
+            foreach (var s in students)
+                Console.WriteLine($"Id: {s.Id} -> {s.Name}, Age: {s.Age}, Contract Date: {s.ContractDate}");
+
         }
     }
 }
