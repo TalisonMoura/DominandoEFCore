@@ -22,7 +22,8 @@ namespace DominandoEFCore.Modules
             //Relationship1ToN();
             //RelationshipNtoN();
             //BackingField();
-            TPHExample();
+            //TPHExample();
+            PropertiesPackage();
         }
 
 
@@ -220,9 +221,22 @@ namespace DominandoEFCore.Modules
 
         }
 
-        void TPTExample()
+        void PropertiesPackage()
         {
+            using var db = Ensures();
 
+            var configuration = new Dictionary<string, object>
+            {
+                ["Key"] = "DataBasePassword",
+                ["Value"] = Guid.NewGuid().ToString("D"),
+            };
+
+            db.Configurations.Add(configuration);
+            db.SaveChanges();
+
+            var configurations = db.Configurations.AsNoTracking().Where(p => (p["Key"] as string).Equals("DataBasePassword")).ToArray();
+            foreach (var config in configurations)
+                Console.WriteLine($"Key: {config["Key"]} - Value: {config["Value"]}");
         }
     }
 }

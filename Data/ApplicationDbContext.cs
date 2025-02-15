@@ -18,6 +18,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<Department> Departments { get; set; }
     public DbSet<ActorMovie> ActorMovies { get; set; }
 
+    public DbSet<Dictionary<string, object>> Configurations => Set<Dictionary<string, object>>("Configurations");
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         const string connectionString = "Server=TALISONJM\\SQLEXPRESS;Database=DominandoEfCore;Integrated Security=true;TrustServerCertificate=True;pooling=true";
@@ -67,5 +69,18 @@ public class ApplicationDbContext : DbContext
         // two diffent ways to register your entity type configuration class
         //modelBuilder.ApplyConfiguration(new ClientConfigurations());
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+
+        modelBuilder.SharedTypeEntity<Dictionary<string, object>>("Configurations", c =>
+        {
+            c.Property<Guid>("Id");
+
+            c.Property<string>("Key")
+             .HasColumnType("varchar(40)")
+             .IsRequired();
+
+            c.Property<string>("Value")
+             .HasColumnType("varchar(255)")
+             .IsRequired();
+        });
     }
 }
