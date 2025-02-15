@@ -219,5 +219,10 @@ namespace DominandoEFCore.Modules
                 Console.WriteLine($"Id: {s.Id} -> {s.Name}, Age: {s.Age}, Contract Date: {s.ContractDate}");
 
         }
+
+        void TPTExample()
+        {
+
+        }
     }
 }

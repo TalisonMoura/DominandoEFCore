@@ -9,10 +9,24 @@ public class PersonConfiguration : IEntityTypeConfiguration<Person>
     public void Configure(EntityTypeBuilder<Person> builder)
     {
         builder
-            .ToTable("Persons")
-            .HasDiscriminator<int>("PersonTipe")
-            .HasValue<Person>(3)
-            .HasValue<Instructor>(6)
-            .HasValue<Student>(99);
+            .ToTable("Persons");
+    }
+}
+
+public class InstructorConfiguration : IEntityTypeConfiguration<Instructor>
+{
+    public void Configure(EntityTypeBuilder<Instructor> builder)
+    {
+        builder
+            .ToTable("Instructors");
+    }
+}
+
+public class StudentConfiguration : IEntityTypeConfiguration<Student>
+{
+    public void Configure(EntityTypeBuilder<Student> builder)
+    {
+        builder
+            .ToTable("Students");
     }
 }
