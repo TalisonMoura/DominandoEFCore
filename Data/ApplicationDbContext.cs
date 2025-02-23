@@ -2,6 +2,7 @@
 using DominandoEFCore.Modules;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace DominandoEFCore.Data;
 
@@ -88,6 +89,11 @@ public class ApplicationDbContext : DbContext
         //     .IsRequired();
         //});
 
-        modelBuilder.RegisterFunctions();
+        //modelBuilder.RegisterFunctions();
+
+        modelBuilder.HasDbFunction(typeof(Functions)
+            .GetRuntimeMethod("Left", [typeof(string), typeof(int)]))
+            .HasName("LEFT")
+            .IsBuiltIn();
     }
 }
