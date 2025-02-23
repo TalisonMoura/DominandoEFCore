@@ -1,4 +1,6 @@
 ﻿using DominandoEFCore.Models;
+using DominandoEFCore.Modules;
+using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 
 namespace DominandoEFCore.Data;
@@ -27,7 +29,10 @@ public class ApplicationDbContext : DbContext
         optionsBuilder
             .UseSqlServer(connectionString, ctxOptsBuilder => ctxOptsBuilder.EnableRetryOnFailure(maxRetryCount: 2, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null))
             .EnableSensitiveDataLogging()
-            .LogTo(Console.WriteLine);
+            .LogTo(Console.WriteLine, LogLevel.Information)
+            .AddInterceptors(new CommandInterceptors())
+            .AddInterceptors(new ConnectionInterceptor())
+            .AddInterceptors(new PersistenceInterceptor());
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -70,17 +75,17 @@ public class ApplicationDbContext : DbContext
         //modelBuilder.ApplyConfiguration(new ClientConfigurations());
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
-        modelBuilder.SharedTypeEntity<Dictionary<string, object>>("Configurations", c =>
-        {
-            c.Property<Guid>("Id");
+        //modelBuilder.SharedTypeEntity<Dictionary<string, object>>("Configurations", c =>
+        //{
+        //    c.Property<Guid>("Id");
 
-            c.Property<string>("Key")
-             .HasColumnType("varchar(40)")
-             .IsRequired();
+        //    c.Property<string>("Key")
+        //     .HasColumnType("varchar(40)")
+        //     .IsRequired();
 
-            c.Property<string>("Value")
-             .HasColumnType("varchar(255)")
-             .IsRequired();
-        });
+        //    c.Property<string>("Value")
+        //     .HasColumnType("varchar(255)")
+        //     .IsRequired();
+        //});
     }
 }

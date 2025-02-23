@@ -17,13 +17,13 @@ namespace DominandoEFCore.Modules
             //ValueConverter();
             //CustomConverter();
             //WorkingWithShadowProperty();
-            //PropertiesType();
+            PropertiesType();
             //Relationship1To1();
             //Relationship1ToN();
             //RelationshipNtoN();
             //BackingField();
             //TPHExample();
-            PropertiesPackage();
+            //PropertiesPackage();
         }
 
 
@@ -91,6 +91,8 @@ namespace DominandoEFCore.Modules
             db.Clients.Add(new Client() { Name = "Talison de Jesus Moura", CellPhone = "31980120850", Address = new() { NeiborHood = "Aparecida", City = "Belo Horizonte" } });
 
             db.SaveChanges();
+
+            var entity = db.Clients.Where(x => x.CellPhone.Equals("31980120850")).Select(x => new { x.Name, x.CellPhone }).FirstOrDefault();
 
             var clients = db.Clients.AsNoTracking().ToList();
 
