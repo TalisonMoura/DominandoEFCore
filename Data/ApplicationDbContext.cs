@@ -87,5 +87,7 @@ public class ApplicationDbContext : DbContext
         //     .HasColumnType("varchar(255)")
         //     .IsRequired();
         //});
+
+        modelBuilder.RegisterFunctions();
     }
 }
